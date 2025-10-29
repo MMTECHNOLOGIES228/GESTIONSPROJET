@@ -1,17 +1,21 @@
 export interface User {
+  id: string;
+  email: string;
+  nom: string;
+  prenom: string;
+  role: string | {  // ← Permettre string ou objet
     id: string;
-    email: string;
-    nom: string;
-    prenom: string;
-    role: string;
-    profilePic?: string;
-    status: 'actif' | 'inactif' | 'en_attente';
-    phone?: string;
-    authMethod: 'email' | 'phone' | 'google';
-    emailVerified?: boolean;
-    phoneVerified?: boolean;
-    createdAt?: string;
-    updatedAt?: string;
+    role_name: string;
+    role_description: string;
+  };
+  profilePic?: string;
+  status: 'actif' | 'inactif' | 'en_attente';
+  phone?: string;
+  authMethod: 'email' | 'phone' | 'google';
+  emailVerified?: boolean;
+  phoneVerified?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface LoginCredentials {
