@@ -125,13 +125,6 @@ export default (sequelize: Sequelize,) => {
         sequelize,
         modelName: 'Utilisateur',
     });
-
-    // Utilisateur.beforeSave(async (utilisateur: Utilisateur, options: any) => {
-    //     if (utilisateur.password) {
-    //         utilisateur.password = bcrypt.hashSync(utilisateur.password, bcrypt.genSaltSync(10));
-    //     }
-    // });
-
     Utilisateur.prototype.comparePassword = function (passw: string, cb: (err: Error | null, isMatch?: boolean) => void) {
         bcrypt.compare(passw, this.password, function (err: Error | null, isMatch: boolean | undefined) {
             if (err) {

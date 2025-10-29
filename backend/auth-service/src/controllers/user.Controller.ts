@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import userService from '../services/user.Service';
 import { UtilisateurAttributes } from '../interfaces/utilisateurAttributes';
 import { AuthenticatedRequest } from '../middlewares/auth';
-import role from 'src/models/role';
 
 export class UserController {
     /**

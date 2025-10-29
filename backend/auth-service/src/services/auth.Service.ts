@@ -1,10 +1,10 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { Utilisateur, Role, RefreshToken, Permission } from '../db/sequelize';
-import { privateKey } from '../config/private_key';
+import { privateKey } from '../auth/private_key';
 import { UtilisateurAttributes } from '../interfaces/utilisateurAttributes';
 import { RefreshTokenAttributes } from '../interfaces/refreshTokenAttributes';
-import { refreshkey } from '../config/refresh_key';
+import { refreshkey } from '../auth/refresh_key';
 import otpService from './otp.Service';
 import { Op } from 'sequelize';
 import path from 'path';

@@ -2,17 +2,17 @@
 version: '3.8'
 
 services:
-  user_service:
-    build: ./backend/user_service
+  auth-service:
+    build: ./backend/auth-service
     environment:
       NODE_ENV: development
-      ENV_FILE: .env.user_service
+      ENV_FILE: .env.auth-service
     networks:
       - service_mynetwork
     ports:
       - "9000:9000"
     volumes:
-      - ./backend/user_service:/app
+      - ./backend/auth-service:/app
     restart: unless-stopped
 
   manage_projets_service:

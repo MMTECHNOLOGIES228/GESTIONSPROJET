@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import roleService from '../services/role.Service';
-import { RoleAttributes } from 'src/interfaces/roleAttributes';
+import { RoleAttributes } from '../interfaces/roleAttributes';
 
 
 

@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import authService from '../services/auth.Service';
 import { AuthenticatedRequest } from '../middlewares/auth';
 import otpService from '../services/otp.Service';
-import { Permission, Role, Utilisateur } from '../db/sequelize';
 
 export class AuthController {
     /**

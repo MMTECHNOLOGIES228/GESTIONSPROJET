@@ -24,10 +24,6 @@ export default (sequelize: Sequelize) => {
             utilisateurId: {
                 type: DataTypes.UUID,
                 allowNull: false,
-                references: {
-                    model: 'utilisateurs',
-                    key: 'id'
-                }
             },
             code: {
                 type: DataTypes.STRING(6),
