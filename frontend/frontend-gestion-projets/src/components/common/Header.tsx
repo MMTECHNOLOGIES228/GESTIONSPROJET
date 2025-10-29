@@ -1,61 +1,38 @@
+// components/common/Header.tsx
 import React from 'react';
-import { useAuth } from '../../contexts/AuthContext';
+import { usePermissions } from '../../hooks/usePermissions';
 
 const Header: React.FC = () => {
-    const { user } = useAuth();
+  const { user, isSuperAdmin, isOrganizationOwner, isOrganizationAdmin } = usePermissions();
 
-    // Fonction pour formater le rôle
-    const formatRole = (role: any): string => {
-        if (!role) return 'Utilisateur';
+  const getRoleDisplay = () => {
+    if (isSuperAdmin) return 'Super Administrateur';
+    if (isOrganizationOwner) return 'Propriétaire';
+    if (isOrganizationAdmin) return 'Administrateur';
+    return user?.role?.role_name || 'Utilisateur';
+  };
+
+  return (
+    <header className="bg-white border-b border-gray-200 px-6 py-4">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center">
+          <h1 className="text-xl font-semibold text-gray-900">
+            Tableau de Bord
+          </h1>
+          <div className="ml-4 hidden lg:block">
+            <span className="text-sm text-gray-500">Connecté en tant que </span>
+            <span className="text-sm font-medium text-primary-600">
+              {getRoleDisplay()}
+            </span>
+          </div>
+        </div>
         
-        // Si c'est déjà une string, la formater
-        if (typeof role === 'string') {
-            return role.toLowerCase().replace('_', ' ');
-        }
-        
-        // Si c'est un objet, essayer d'extraire le nom du rôle
-        if (typeof role === 'object' && role.role_name) {
-            return role.role_name.toLowerCase().replace('_', ' ');
-        }
-        
-        return 'Utilisateur';
-    };
-
-    // Fonction pour obtenir les initiales
-    const getInitials = (prenom?: string, nom?: string): string => {
-        if (!prenom && !nom) return 'U';
-        return `${prenom?.[0] || ''}${nom?.[0] || ''}`.toUpperCase();
-    };
-
-    return (
-        <header className="bg-white shadow-sm border-b border-gray-200">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex justify-between items-center h-16">
-                    <div className="flex items-center">
-                        <h1 className="text-2xl font-bold text-gray-900">
-                            Tableau de Bord
-                        </h1>
-                    </div>
-
-                    <div className="flex items-center space-x-4">
-                        <div className="text-right">
-                            <p className="text-sm font-medium text-gray-900">
-                                {user?.prenom} {user?.nom}
-                            </p>
-                            <p className="text-sm text-gray-500 capitalize">
-                                {formatRole(user?.role)}
-                            </p>
-                        </div>
-                        <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                            <span className="text-blue-600 font-semibold text-sm">
-                                {getInitials(user?.prenom, user?.nom)}
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </header>
-    );
+        <div className="flex items-center space-x-4">
+          {/* Notifications, profil, etc. */}
+        </div>
+      </div>
+    </header>
+  );
 };
 
 export default Header;

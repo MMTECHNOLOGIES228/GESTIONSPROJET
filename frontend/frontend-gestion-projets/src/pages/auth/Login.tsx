@@ -4,7 +4,7 @@ import { useNavigate, Navigate } from 'react-router-dom';
 import { LoginCredentials } from '../../types/auth.types';
 
 const Login: React.FC = () => {
-  const { login, isAuthenticated, loading } = useAuth();
+  const { login, isAuthenticated, isLoading } = useAuth(); // Changé de 'loading' à 'isLoading'
   const navigate = useNavigate();
   
   const [formData, setFormData] = useState<LoginCredentials>({
@@ -36,15 +36,14 @@ const Login: React.FC = () => {
     setIsLoggingIn(true);
     setError('');
 
-    const result = await login(formData);
-    
-    if (result.success) {
+    try {
+      await login(formData);
       navigate('/dashboard');
-    } else {
-      setError(result.error || 'Erreur de connexion');
+    } catch (err: any) {
+      setError(err.message || 'Erreur de connexion');
+    } finally {
+      setIsLoggingIn(false);
     }
-    
-    setIsLoggingIn(false);
   };
 
   const fillDemoCredentials = (email: string) => {
@@ -56,7 +55,7 @@ const Login: React.FC = () => {
     setShowDemoCredentials(false);
   };
 
-  if (loading) {
+  if (isLoading) { // Changé de 'loading' à 'isLoading'
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
         <div className="text-center">

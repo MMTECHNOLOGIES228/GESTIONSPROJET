@@ -1,11 +1,17 @@
-import { useContext } from 'react';
-import { AuthContext } from '../contexts/AuthContext';
+// hooks/useAuth.ts
+import { useAuth as useAuthContext } from '../contexts/AuthContext';
 
-
+// hooks/useAuth.ts
 export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
+  const context = useAuthContext();
+
+  return {
+    user: context.user,
+    isAuthenticated: context.isAuthenticated,
+    isLoading: context.isLoading, // Doit être 'isLoading'
+    login: context.login,
+    logout: context.logout,
+    hasPermission: context.hasPermission,
+    hasRole: context.hasRole
+  };
 };

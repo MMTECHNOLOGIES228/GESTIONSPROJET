@@ -3,11 +3,7 @@ export interface User {
   email: string;
   nom: string;
   prenom: string;
-  role: string | {  // ← Permettre string ou objet
-    id: string;
-    role_name: string;
-    role_description: string;
-  };
+  role?: Role;
   profilePic?: string;
   status: 'actif' | 'inactif' | 'en_attente';
   phone?: string;
@@ -16,6 +12,7 @@ export interface User {
   phoneVerified?: boolean;
   createdAt?: string;
   updatedAt?: string;
+  permissions?: string[]; // Ajoutez cette ligne
 }
 
 export interface LoginCredentials {
@@ -38,4 +35,21 @@ export interface AuthContextType {
     logout: () => void;
     loading: boolean;
     isAuthenticated: boolean;
+}
+
+export interface Role {
+  id: string;
+  role_name: string;
+  role_description: string;
+  createdAt: string;
+  updatedAt: string;
+  permissions?: Permission[];
+}
+
+export interface Permission {
+  id: string;
+  perm_name: string;
+  perm_description: string;
+  createdAt: string;
+  updatedAt: string;
 }
