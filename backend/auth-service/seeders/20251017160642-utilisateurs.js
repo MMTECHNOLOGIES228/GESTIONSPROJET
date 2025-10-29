@@ -1,3 +1,4 @@
+
 'use strict';
 const { v4: uuidv4 } = require('uuid');
 const bcrypt = require('bcryptjs');
@@ -6,117 +7,163 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     console.log('Début du seeder Utilisateurs...');
 
-    // Récupérer les IDs des rôles
-    const roles = await queryInterface.sequelize.query(
-      'SELECT id, role_name FROM Roles;',
-      { type: queryInterface.sequelize.QueryTypes.SELECT }
-    );
+    try {
+      // Récupérer les IDs des rôles
+      const roles = await queryInterface.sequelize.query(
+        'SELECT id, role_name FROM "Roles";',
+        { type: queryInterface.sequelize.QueryTypes.SELECT }
+      );
 
-    console.log('Rôles trouvés:', roles);
+      console.log('Rôles trouvés:', roles);
 
       if (roles.length === 0) {
         throw new Error('Aucun rôle trouvé dans la base de données. Exécutez d\'abord le seeder des rôles.');
       }
 
+      const rolesMap = {};
+      roles.forEach(role => {
+        rolesMap[role.role_name] = role.id;
+      });
 
-    const rolesMap = {};
-    roles.forEach(role => {
-      rolesMap[role.role_name] = role.id;
-    });
+      const hashedPassword = await bcrypt.hash('password123', 10);
 
-    const hashedPassword = await bcrypt.hash('password123', 10);
-    
-    const usersData = [
-      {
-        id: uuidv4(),
-        username: 'superadmin',
-        email: 'superadmin@projectapp.com',
-        password_hash: hashedPassword,
-        first_name: 'Super',
-        last_name: 'Admin',
-        phone_number: '+1234567890',
-        is_verified: true,
-        is_active: true,
-        role_id: rolesMap['Super Admin'],
-        createdAt: new Date(),
-        updatedAt: new Date()
-      },
-      {
-        id: uuidv4(),
-        username: 'orgowner',
-        email: 'owner@company.com',
-        password_hash: hashedPassword,
-        first_name: 'Organization',
-        last_name: 'Owner',
-        phone_number: '+1234567891',
-        is_verified: true,
-        is_active: true,
-        role_id: rolesMap['Organization Owner'],
-        createdAt: new Date(),
-        updatedAt: new Date()
-      },
-      {
-        id: uuidv4(),
-        username: 'projectmanager',
-        email: 'manager@company.com',
-        password_hash: hashedPassword,
-        first_name: 'Project',
-        last_name: 'Manager',
-        phone_number: '+1234567892',
-        is_verified: true,
-        is_active: true,
-        role_id: rolesMap['Project Manager'],
-        createdAt: new Date(),
-        updatedAt: new Date()
-      },
-      {
-        id: uuidv4(),
-        username: 'teamlead',
-        email: 'lead@company.com',
-        password_hash: hashedPassword,
-        first_name: 'Team',
-        last_name: 'Lead',
-        phone_number: '+1234567893',
-        is_verified: true,
-        is_active: true,
-        role_id: rolesMap['Team Lead'],
-        createdAt: new Date(),
-        updatedAt: new Date()
-      },
-      {
-        id: uuidv4(),
-        username: 'member1',
-        email: 'member1@company.com',
-        password_hash: hashedPassword,
-        first_name: 'John',
-        last_name: 'Doe',
-        phone_number: '+1234567894',
-        is_verified: true,
-        is_active: true,
-        role_id: rolesMap['Member'],
-        createdAt: new Date(),
-        updatedAt: new Date()
-      },
-      {
-        id: uuidv4(),
-        username: 'viewer1',
-        email: 'viewer@company.com',
-        password_hash: hashedPassword,
-        first_name: 'View',
-        last_name: 'Only',
-        phone_number: '+1234567895',
-        is_verified: true,
-        is_active: true,
-        role_id: rolesMap['Viewer'],
-        createdAt: new Date(),
-        updatedAt: new Date()
-      }
-    ];
+      const usersData = [
+        {
+          id: uuidv4(),
+          roleId: rolesMap['Super Admin'],
+          email: 'superadmin@projectapp.com',
+          phone: '+1234567890',
+          password: hashedPassword,
+          nom: 'Admin',
+          prenom: 'Super',
 
-    console.log('Données utilisateurs à insérer:', JSON.stringify(usersData, null, 2));
-    
-    const result = await queryInterface.bulkInsert('Utilisateurs', usersData, {});
-    console.log(`Seeder Utilisateurs terminé. ${result} enregistrements insérés.`);
+          status: 'actif',
+          emailVerified: true,
+          phoneVerified: true,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        },
+        {
+          id: uuidv4(),
+          roleId: rolesMap['Organization Owner'],
+          email: 'owner@company.com',
+          phone: '+1234567891',
+          password: hashedPassword,
+          nom: 'Owner',
+          prenom: 'Organization',
+          status: 'actif',
+
+          emailVerified: true,
+          phoneVerified: true,
+
+          createdAt: new Date(),
+          updatedAt: new Date()
+        },
+        {
+          id: uuidv4(),
+          roleId: rolesMap['Organization Admin'],
+          email: 'admin@company.com',
+          phone: '+1234567892',
+          password: hashedPassword,
+          nom: 'Admin',
+          prenom: 'Organization',
+
+          status: 'actif',
+
+
+          emailVerified: true,
+          phoneVerified: true,
+
+
+          createdAt: new Date(),
+          updatedAt: new Date()
+        },
+        {
+          id: uuidv4(),
+          roleId: rolesMap['Project Manager'],
+          email: 'manager@company.com',
+          phone: '+1234567893',
+          password: hashedPassword,
+          nom: 'Manager',
+          prenom: 'Project',
+
+          status: 'actif',
+
+
+          emailVerified: true,
+          phoneVerified: true,
+
+
+          createdAt: new Date(),
+          updatedAt: new Date()
+        },
+        {
+          id: uuidv4(),
+          roleId: rolesMap['Team Lead'],
+          email: 'lead@company.com',
+          phone: '+1234567894',
+          password: hashedPassword,
+          nom: 'Lead',
+          prenom: 'Team',
+
+          status: 'actif',
+
+
+          emailVerified: true,
+          phoneVerified: true,
+
+
+          createdAt: new Date(),
+          updatedAt: new Date()
+        },
+        {
+          id: uuidv4(),
+          roleId: rolesMap['Member'],
+          email: 'member1@company.com',
+          phone: '+1234567895',
+          password: hashedPassword,
+          nom: 'Doe',
+          prenom: 'John',
+
+          status: 'actif',
+
+
+          emailVerified: true,
+          phoneVerified: true,
+
+
+          createdAt: new Date(),
+          updatedAt: new Date()
+        },
+        {
+          id: uuidv4(),
+          roleId: rolesMap['Viewer'],
+          email: 'viewer@company.com',
+          phone: '+1234567896',
+          password: hashedPassword,
+          nom: 'Only',
+          prenom: 'View',
+
+          status: 'actif',
+
+
+          emailVerified: true,
+          phoneVerified: true,
+
+
+          createdAt: new Date(),
+          updatedAt: new Date()
+        }
+      ];
+
+      console.log('Données utilisateurs à insérer:', JSON.stringify(usersData, null, 2));
+
+      const result = await queryInterface.bulkInsert('Utilisateurs', usersData, {});
+      console.log(`Seeder Utilisateurs terminé. ${result} enregistrements insérés.`);
+    } catch (error) {
+      console.error('Erreur lors du seeder Utilisateurs:', error);
+      throw error;
+    }
   },
 
   async down(queryInterface, Sequelize) {
