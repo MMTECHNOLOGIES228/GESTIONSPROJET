@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, RequestHandler } from 'express';
 import { MemberController } from '../controllers/member.controller';
 import auth, { AuthenticatedRequest } from '../middlewares/auth';
 import { tenantMiddleware } from '../middlewares/tenant.middleware';
@@ -47,7 +47,7 @@ const memberController = new MemberController();
  *       500:
  *         description: Internal server error
  */
-router.get('/', auth(), tenantMiddleware(), memberController.getOrganizationMembers);
+router.get('/', auth(), tenantMiddleware(), memberController.getOrganizationMembers as unknown as RequestHandler);
 
 /**
  * @swagger
@@ -71,7 +71,7 @@ router.get('/', auth(), tenantMiddleware(), memberController.getOrganizationMemb
  *       500:
  *         description: Internal server error
  */
-router.get('/me',  memberController.getMyMembership);
+router.get('/me',  memberController.getMyMembership as unknown as RequestHandler);
 
 /**
  * @swagger
@@ -122,7 +122,7 @@ router.get('/me',  memberController.getMyMembership);
  *       500:
  *         description: Internal server error
  */
-router.post('/', authMiddleware, tenantMiddleware, memberController.addMember);
+router.post('/', auth(), tenantMiddleware(), memberController.addMember as unknown as RequestHandler);
 
 /**
  * @swagger
@@ -166,7 +166,7 @@ router.post('/', authMiddleware, tenantMiddleware, memberController.addMember);
  *       500:
  *         description: Internal server error
  */
-router.post('/invite', authMiddleware, tenantMiddleware, memberController.inviteMember);
+router.post('/invite', auth(), tenantMiddleware(), memberController.inviteMember as unknown as RequestHandler);
 
 /**
  * @swagger
@@ -219,7 +219,7 @@ router.post('/invite', authMiddleware, tenantMiddleware, memberController.invite
  *       500:
  *         description: Internal server error
  */
-router.put('/:id', authMiddleware, tenantMiddleware, memberController.updateMember);
+router.put('/:id', auth(), tenantMiddleware(), memberController.updateMember as unknown as RequestHandler);
 
 /**
  * @swagger
@@ -252,6 +252,6 @@ router.put('/:id', authMiddleware, tenantMiddleware, memberController.updateMemb
  *       500:
  *         description: Internal server error
  */
-router.delete('/:id', authMiddleware, tenantMiddleware, memberController.removeMember);
+router.delete('/:id', auth(), tenantMiddleware(), memberController.removeMember as unknown as RequestHandler);
 
 export default router;

@@ -54,7 +54,11 @@ const organizationController = new OrganizationController();
  *       500:
  *         description: Internal server error
  */
-router.post('/',  organizationController.createOrganization);
+router.post(
+  '/',
+  authMiddleware(),
+  organizationController.createOrganization as unknown as import('express').RequestHandler
+);
 
 /**
  * @swagger
@@ -76,7 +80,11 @@ router.post('/',  organizationController.createOrganization);
  *       500:
  *         description: Internal server error
  */
-router.get('/', authMiddleware, organizationController.getUserOrganizations);
+router.get(
+  '/',
+  authMiddleware(),
+  organizationController.getUserOrganizations as unknown as import('express').RequestHandler
+);
 
 /**
  * @swagger
@@ -107,7 +115,12 @@ router.get('/', authMiddleware, organizationController.getUserOrganizations);
  *       500:
  *         description: Internal server error
  */
-router.get('/:id', authMiddleware, tenantMiddleware, organizationController.getOrganization);
+router.get(
+  '/:id',
+  authMiddleware(),
+  tenantMiddleware(),
+  organizationController.getOrganization as unknown as import('express').RequestHandler
+);
 
 /**
  * @swagger
@@ -162,7 +175,12 @@ router.get('/:id', authMiddleware, tenantMiddleware, organizationController.getO
  *       500:
  *         description: Internal server error
  */
-router.put('/:id', authMiddleware, tenantMiddleware, organizationController.updateOrganization);
+router.put(
+  '/:id',
+  authMiddleware(),
+  tenantMiddleware(),
+  organizationController.updateOrganization as unknown as import('express').RequestHandler
+);
 
 /**
  * @swagger
@@ -195,6 +213,11 @@ router.put('/:id', authMiddleware, tenantMiddleware, organizationController.upda
  *       500:
  *         description: Internal server error
  */
-router.delete('/:id', authMiddleware, tenantMiddleware, organizationController.deleteOrganization);
+router.delete(
+  '/:id',
+  authMiddleware(),
+  tenantMiddleware(),
+  organizationController.deleteOrganization as unknown as import('express').RequestHandler
+);
 
 export default router;

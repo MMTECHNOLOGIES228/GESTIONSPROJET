@@ -59,7 +59,7 @@ export class MemberService {
           ...memberData,
           user_email: `user-${memberData.user_id}@example.com`, // Mock data
           user_name: `User ${memberData.user_id.substring(0, 8)}`, // Mock data
-          user_avatar: null // Mock data
+          user_avatar: undefined // Mock data
         };
       });
 
@@ -499,8 +499,10 @@ export class MemberService {
   /**
    * Check if a role is higher than another
    */
-  private isHigherRole(role1: MemberRole, role2: MemberRole): boolean {
-    const roleHierarchy = ['viewer', 'member', 'admin', 'owner'];
+  private isHigherRole(role1?: MemberRole, role2?: MemberRole): boolean {
+    // If either role is missing, treat as not higher
+    if (!role1 || !role2) return false;
+    const roleHierarchy: MemberRole[] = ['viewer', 'member', 'admin', 'owner'];
     return roleHierarchy.indexOf(role1) > roleHierarchy.indexOf(role2);
   }
 

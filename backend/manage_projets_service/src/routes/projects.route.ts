@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { ProjectController } from '../controllers/project.controller';
-import { authMiddleware } from '../middlewares/auth.middleware';
+import authMiddleware from '../middlewares/auth';
 import { tenantMiddleware } from '../middlewares/tenant.middleware';
 
 const router = Router();
@@ -70,7 +70,7 @@ const projectController = new ProjectController();
  *       500:
  *         description: Internal server error
  */
-router.post('/', authMiddleware, tenantMiddleware, projectController.createProject);
+router.post('/', authMiddleware(), tenantMiddleware(), projectController.createProject as any);
 
 /**
  * @swagger
@@ -117,7 +117,7 @@ router.post('/', authMiddleware, tenantMiddleware, projectController.createProje
  *       500:
  *         description: Internal server error
  */
-router.get('/', authMiddleware, tenantMiddleware, projectController.getOrganizationProjects);
+router.get('/', authMiddleware(), tenantMiddleware(), projectController.getOrganizationProjects as any);
 
 /**
  * @swagger
@@ -139,7 +139,7 @@ router.get('/', authMiddleware, tenantMiddleware, projectController.getOrganizat
  *       500:
  *         description: Internal server error
  */
-router.get('/stats', authMiddleware, tenantMiddleware, projectController.getProjectStats);
+router.get('/stats',authMiddleware(), tenantMiddleware(), projectController.getProjectStats as any);
 
 /**
  * @swagger
@@ -170,7 +170,7 @@ router.get('/stats', authMiddleware, tenantMiddleware, projectController.getProj
  *       500:
  *         description: Internal server error
  */
-router.get('/:id', authMiddleware, tenantMiddleware, projectController.getProject);
+router.get('/:id',authMiddleware(), tenantMiddleware(), projectController.getProject as any);
 
 /**
  * @swagger
@@ -228,7 +228,7 @@ router.get('/:id', authMiddleware, tenantMiddleware, projectController.getProjec
  *       500:
  *         description: Internal server error
  */
-router.put('/:id', authMiddleware, tenantMiddleware, projectController.updateProject);
+router.put('/:id', authMiddleware(), tenantMiddleware(), projectController.updateProject as any);
 
 /**
  * @swagger
@@ -261,6 +261,6 @@ router.put('/:id', authMiddleware, tenantMiddleware, projectController.updatePro
  *       500:
  *         description: Internal server error
  */
-router.delete('/:id', authMiddleware, tenantMiddleware, projectController.deleteProject);
+router.delete('/:id', authMiddleware(), tenantMiddleware(), projectController.deleteProject as any);
 
 export default router;

@@ -12,19 +12,22 @@ import swaggerDocs from "./swagger";
 
 
 
+
+
 // 
-// import authRouter from "./routes/auth";
-// import reinitialserRouter from "./routes/reinitialser";
-// import utilisateurRouter from "./routes/utilisateur";
-// import rolesRouter from "./routes/roles";
-// import permissionsRouter from "./routes/permissions";
+import membersRouter from "./routes/members.route";
+import organizationsRouter from "./routes/organizations.route";
+import projectsRouter from "./routes/projects.route";
+import tasksRouter from "./routes/tasks.route";
+
 // 
 dotenv.config();
 
 
 
 import corsOptions from "./config/corsOptions";
-import sequelize from "./db/sequelize";
+import { initDb } from './db/sequelize';
+
 
 
 const app = express();
@@ -50,18 +53,17 @@ app
   .use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
 
 
-sequelize.initDb();
+initDb();
 
 // 
 // Middleware pour servir la documentation Swagger
 // app.use("/api/v1/api-docs-user", swaggerUi.serve, swaggerUi.setup(specs));
 
 // Vos routes
-// app.use("/api/v1/auth", authRouter);
-// app.use("/api/v1/reinitialser", reinitialserRouter);
-// app.use("/api/v1/utilisateur", utilisateurRouter);
-// app.use("/api/v1/roles", rolesRouter);
-// app.use("/api/v1/permissions", permissionsRouter);
+app.use("/api/v1/members", membersRouter);
+app.use("/api/v1/organizations", organizationsRouter);
+app.use("/api/v1/projects", projectsRouter);
+app.use("/api/v1/tasks", tasksRouter);
 // Route pour le téléchargement
 
 
