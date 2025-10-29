@@ -25,19 +25,11 @@ export default function (sequelize: Sequelize): typeof Member {
       organization_id: {
         type: DataTypes.UUID,
         allowNull: false,
-        references: {
-          model: 'organizations',
-          key: 'id'
-        },
         onDelete: 'CASCADE'
       },
       user_id: {
         type: DataTypes.UUID,
         allowNull: false,
-        references: {
-          model: 'users', // Reference to auth-service users table
-          key: 'id'
-        }
       },
       role: {
         type: DataTypes.ENUM('owner', 'admin', 'member', 'viewer'),
@@ -71,24 +63,7 @@ export default function (sequelize: Sequelize): typeof Member {
     },
     {
       sequelize,
-      tableName: 'members',
       modelName: 'Member',
-      timestamps: true,
-      underscored: true,
-      indexes: [
-        {
-          unique: true,
-          fields: ['organization_id', 'user_id']
-        },
-        {
-          fields: ['user_id'] // For finding all organizations a user belongs to
-        }
-      ],
-      hooks: {
-        beforeUpdate: (member: Member) => {
-          member.updated_at = new Date();
-        }
-      }
     }
   );
 

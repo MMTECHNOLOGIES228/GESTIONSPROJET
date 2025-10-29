@@ -14,7 +14,7 @@ export class MemberController {
     /**
      * Get all members for current organization
      */
-    getOrganizationMembers = async (req: ITenantRequest, res: Response): Promise<void> => {
+     async getOrganizationMembers (req: ITenantRequest, res: Response) {
         try {
             const organizationId = req.tenant.organization_id;
             const userId = req.user.id;
@@ -44,7 +44,7 @@ export class MemberController {
     /**
      * Add member to organization
      */
-    addMember = async (req: ITenantRequest, res: Response): Promise<void> => {
+    async addMember  (req: ITenantRequest, res: Response) {
         try {
             const memberData: IMemberCreate = req.body;
             const userId = req.user.id;
@@ -73,7 +73,7 @@ export class MemberController {
     /**
      * Update member role and permissions
      */
-    updateMember = async (req: ITenantRequest, res: Response): Promise<void> => {
+    async updateMember  (req: ITenantRequest, res: Response) {
         try {
             const { id } = req.params;
             const updateData: IMemberUpdate = req.body;
@@ -106,7 +106,7 @@ export class MemberController {
     /**
      * Remove member from organization
      */
-    removeMember = async (req: ITenantRequest, res: Response): Promise<void> => {
+   async removeMember  (req: ITenantRequest, res: Response) {
         try {
             const { id } = req.params;
             const userId = req.user.id;
@@ -133,7 +133,7 @@ export class MemberController {
     /**
      * Invite member to organization via email
      */
-    inviteMember = async (req: ITenantRequest, res: Response): Promise<void> => {
+    async inviteMember   (req: ITenantRequest, res: Response) {
         try {
             const inviteData: IMemberInvite = req.body;
             const userId = req.user.id;
@@ -163,7 +163,7 @@ export class MemberController {
     /**
      * Get current user's membership info
      */
-    getMyMembership = async (req: ITenantRequest, res: Response): Promise<void> => {
+   async getMyMembership  (req: ITenantRequest, res: Response)  {
         try {
             const organizationId = req.tenant.organization_id;
             const userId = req.user.id;

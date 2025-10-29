@@ -17,7 +17,7 @@ COPY . .
 # RUN npm run build
 
 # Expose the port on which your application runs
-EXPOSE 9000
+EXPOSE 9001
 
 # Command to run the application in production mode
 CMD ["npm", "run", "serve"]

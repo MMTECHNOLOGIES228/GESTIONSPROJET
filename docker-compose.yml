@@ -1,0 +1,33 @@
+
+version: '3.8'
+
+services:
+  user_service:
+    build: ./backend/user_service
+    environment:
+      NODE_ENV: development
+      ENV_FILE: .env.user_service
+    networks:
+      - service_mynetwork
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./backend/user_service:/app
+    restart: unless-stopped
+
+  manage_projets_service:
+    build: ./backend/manage_projets_service
+    environment:
+      NODE_ENV: development
+      ENV_FILE: .env.manage_projets_service
+    networks:
+      - service_mynetwork
+    ports:
+      - "9001:9001"
+    volumes:
+      - ./backend/manage_projets_service:/app
+    restart: unless-stopped
+
+networks:
+  service_mynetwork:
+    driver: bridge
