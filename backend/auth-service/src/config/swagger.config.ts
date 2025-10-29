@@ -4,19 +4,19 @@ const swaggerOptions: swaggerJSDoc.Options = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'manage projets service API',
+      title: 'Auth Service API',
       version: '1.0.0',
       description: 'API documentation for User Service',
     },
     servers: [
       {
-        url: 'http://localhost:9001',
+        url: 'http://localhost:8000',
         description: 'Local server',
       },
-      // {
-      //   url: 'http://195.26.241.68:9000',
-      //   description: 'Production server',
-      // },
+      {
+        url: '',
+        description: 'Production server',
+      },
     ],
     components: {
       securitySchemes: {

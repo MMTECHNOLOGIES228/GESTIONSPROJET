@@ -1,6 +1,6 @@
-import { Router, RequestHandler } from 'express';
+import { Router } from 'express';
 import { MemberController } from '../controllers/member.controller';
-import auth, { AuthenticatedRequest } from '../middlewares/auth';
+import authMiddleware from '../middlewares/auth';
 import { tenantMiddleware } from '../middlewares/tenant.middleware';
 
 const router = Router();
@@ -10,14 +10,14 @@ const memberController = new MemberController();
  * @swagger
  * tags:
  *   name: Members
- *   description: Organization member management API
+ *   description: Gestion des membres d'organisation
  */
 
 /**
  * @swagger
- * /api/members:
+ * /api/v1/members:
  *   get:
- *     summary: Get all members for current organization
+ *     summary: Obtenir tous les membres de l'organisation courante
  *     tags: [Members]
  *     security:
  *       - BearerAuth: []
@@ -27,57 +27,67 @@ const memberController = new MemberController();
  *         schema:
  *           type: integer
  *           minimum: 1
- *         description: Page number
+ *         description: Numéro de page
  *       - in: query
  *         name: limit
  *         schema:
  *           type: integer
  *           minimum: 1
  *           maximum: 100
- *         description: Number of items per page
+ *         description: Nombre d'éléments par page
  *     responses:
  *       200:
- *         description: Members retrieved successfully
+ *         description: Membres récupérés avec succès
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ApiResponse'
  *       401:
- *         description: Unauthorized
+ *         description: Non authentifié
  *       500:
- *         description: Internal server error
+ *         description: Erreur serveur
  */
-router.get('/', auth(), tenantMiddleware(), memberController.getOrganizationMembers as unknown as RequestHandler);
+router.get(
+  '/',
+  authMiddleware(),
+  tenantMiddleware(),
+  memberController.getOrganizationMembers as any
+);
 
 /**
  * @swagger
- * /api/members/me:
+ * /api/v1/members/me:
  *   get:
- *     summary: Get current user's membership info
+ *     summary: Obtenir les informations de membership de l'utilisateur courant
  *     tags: [Members]
  *     security:
  *       - BearerAuth: []
  *     responses:
  *       200:
- *         description: Membership info retrieved successfully
+ *         description: Informations récupérées avec succès
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ApiResponse'
  *       404:
- *         description: Membership not found
+ *         description: Membership non trouvé
  *       401:
- *         description: Unauthorized
+ *         description: Non authentifié
  *       500:
- *         description: Internal server error
+ *         description: Erreur serveur
  */
-router.get('/me',  memberController.getMyMembership as unknown as RequestHandler);
+router.get(
+  '/me',
+  authMiddleware(),
+  tenantMiddleware(),
+  memberController.getMyMembership as any
+);
 
 /**
  * @swagger
- * /api/members:
+ * /api/v1/members:
  *   post:
- *     summary: Add member to organization
+ *     summary: Ajouter un membre à l'organisation
  *     tags: [Members]
  *     security:
  *       - BearerAuth: []
@@ -97,38 +107,34 @@ router.get('/me',  memberController.getMyMembership as unknown as RequestHandler
  *                 type: string
  *                 enum: [owner, admin, member, viewer]
  *                 example: "member"
- *               permissions:
- *                 type: object
- *                 properties:
- *                   can_create_projects:
- *                     type: boolean
- *                     example: true
- *                   can_edit_projects:
- *                     type: boolean
- *                     example: true
  *     responses:
  *       201:
- *         description: Member added successfully
+ *         description: Membre ajouté avec succès
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ApiResponse'
  *       400:
- *         description: Bad request
+ *         description: Données invalides
  *       401:
- *         description: Unauthorized
+ *         description: Non authentifié
  *       403:
- *         description: Forbidden
+ *         description: Permissions insuffisantes
  *       500:
- *         description: Internal server error
+ *         description: Erreur serveur
  */
-router.post('/', auth(), tenantMiddleware(), memberController.addMember as unknown as RequestHandler);
+router.post(
+  '/',
+  authMiddleware(),
+  tenantMiddleware(['can_invite_members'], ['owner', 'admin']),
+  memberController.addMember as any
+);
 
 /**
  * @swagger
- * /api/members/invite:
+ * /api/v1/members/invite:
  *   post:
- *     summary: Invite member to organization via email
+ *     summary: Inviter un membre par email
  *     tags: [Members]
  *     security:
  *       - BearerAuth: []
@@ -152,27 +158,32 @@ router.post('/', auth(), tenantMiddleware(), memberController.addMember as unkno
  *                 example: "member"
  *     responses:
  *       201:
- *         description: Invitation sent successfully
+ *         description: Invitation envoyée avec succès
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ApiResponse'
  *       400:
- *         description: Bad request
+ *         description: Données invalides
  *       401:
- *         description: Unauthorized
+ *         description: Non authentifié
  *       403:
- *         description: Forbidden
+ *         description: Permissions insuffisantes
  *       500:
- *         description: Internal server error
+ *         description: Erreur serveur
  */
-router.post('/invite', auth(), tenantMiddleware(), memberController.inviteMember as unknown as RequestHandler);
+router.post(
+  '/invite',
+  authMiddleware(),
+  tenantMiddleware(['can_invite_members'], ['owner', 'admin']),
+  memberController.inviteMember as any
+);
 
 /**
  * @swagger
- * /api/members/{id}:
+ * /api/v1/members/{id}:
  *   put:
- *     summary: Update member role and permissions
+ *     summary: Mettre à jour le rôle et les permissions d'un membre
  *     tags: [Members]
  *     security:
  *       - BearerAuth: []
@@ -182,7 +193,7 @@ router.post('/invite', auth(), tenantMiddleware(), memberController.inviteMember
  *         required: true
  *         schema:
  *           type: string
- *         description: Member ID
+ *         description: ID du membre
  *     requestBody:
  *       required: true
  *       content:
@@ -205,27 +216,32 @@ router.post('/invite', auth(), tenantMiddleware(), memberController.inviteMember
  *                     example: true
  *     responses:
  *       200:
- *         description: Member updated successfully
+ *         description: Membre mis à jour avec succès
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ApiResponse'
  *       400:
- *         description: Bad request
+ *         description: Données invalides
  *       401:
- *         description: Unauthorized
+ *         description: Non authentifié
  *       403:
- *         description: Forbidden
+ *         description: Permissions insuffisantes
  *       500:
- *         description: Internal server error
+ *         description: Erreur serveur
  */
-router.put('/:id', auth(), tenantMiddleware(), memberController.updateMember as unknown as RequestHandler);
+router.put(
+  '/:id',
+  authMiddleware(),
+  tenantMiddleware(['can_manage_members'], ['owner', 'admin']),
+  memberController.updateMember as any
+);
 
 /**
  * @swagger
- * /api/members/{id}:
+ * /api/v1/members/{id}:
  *   delete:
- *     summary: Remove member from organization
+ *     summary: Supprimer un membre de l'organisation
  *     tags: [Members]
  *     security:
  *       - BearerAuth: []
@@ -235,23 +251,28 @@ router.put('/:id', auth(), tenantMiddleware(), memberController.updateMember as 
  *         required: true
  *         schema:
  *           type: string
- *         description: Member ID
+ *         description: ID du membre
  *     responses:
  *       200:
- *         description: Member removed successfully
+ *         description: Membre supprimé avec succès
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ApiResponse'
  *       400:
- *         description: Bad request
+ *         description: Données invalides
  *       401:
- *         description: Unauthorized
+ *         description: Non authentifié
  *       403:
- *         description: Forbidden
+ *         description: Permissions insuffisantes
  *       500:
- *         description: Internal server error
+ *         description: Erreur serveur
  */
-router.delete('/:id', auth(), tenantMiddleware(), memberController.removeMember as unknown as RequestHandler);
+router.delete(
+  '/:id',
+  authMiddleware(),
+  tenantMiddleware(['can_remove_members'], ['owner', 'admin']),
+  memberController.removeMember as any
+);
 
 export default router;

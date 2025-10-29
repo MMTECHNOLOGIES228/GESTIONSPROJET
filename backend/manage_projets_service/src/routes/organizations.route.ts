@@ -10,14 +10,14 @@ const organizationController = new OrganizationController();
  * @swagger
  * tags:
  *   name: Organizations
- *   description: Organization management API
+ *   description: Gestion des organisations
  */
 
 /**
  * @swagger
- * /api/organizations:
+ * /api/v1/organizations:
  *   post:
- *     summary: Create a new organization
+ *     summary: Créer une nouvelle organisation
  *     tags: [Organizations]
  *     security:
  *       - BearerAuth: []
@@ -39,58 +39,58 @@ const organizationController = new OrganizationController();
  *                 example: "acme-corp"
  *               description:
  *                 type: string
- *                 example: "A leading technology company"
+ *                 example: "Une entreprise leader en technologie"
  *     responses:
  *       201:
- *         description: Organization created successfully
+ *         description: Organisation créée avec succès
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ApiResponse'
  *       400:
- *         description: Bad request
+ *         description: Données invalides
  *       401:
- *         description: Unauthorized
+ *         description: Non authentifié
  *       500:
- *         description: Internal server error
+ *         description: Erreur serveur
  */
 router.post(
   '/',
   authMiddleware(),
-  organizationController.createOrganization as unknown as import('express').RequestHandler
+  organizationController.createOrganization as any
 );
 
 /**
  * @swagger
- * /api/organizations:
+ * /api/v1/organizations:
  *   get:
- *     summary: Get all organizations for current user
+ *     summary: Obtenir toutes les organisations de l'utilisateur courant
  *     tags: [Organizations]
  *     security:
  *       - BearerAuth: []
  *     responses:
  *       200:
- *         description: Organizations retrieved successfully
+ *         description: Organisations récupérées avec succès
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ApiResponse'
  *       401:
- *         description: Unauthorized
+ *         description: Non authentifié
  *       500:
- *         description: Internal server error
+ *         description: Erreur serveur
  */
 router.get(
   '/',
   authMiddleware(),
-  organizationController.getUserOrganizations as unknown as import('express').RequestHandler
+  organizationController.getUserOrganizations as any
 );
 
 /**
  * @swagger
- * /api/organizations/{id}:
+ * /api/v1/organizations/{id}:
  *   get:
- *     summary: Get organization by ID
+ *     summary: Obtenir une organisation par son ID
  *     tags: [Organizations]
  *     security:
  *       - BearerAuth: []
@@ -100,33 +100,33 @@ router.get(
  *         required: true
  *         schema:
  *           type: string
- *         description: Organization ID
+ *         description: ID de l'organisation
  *     responses:
  *       200:
- *         description: Organization retrieved successfully
+ *         description: Organisation récupérée avec succès
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ApiResponse'
  *       404:
- *         description: Organization not found
+ *         description: Organisation non trouvée
  *       401:
- *         description: Unauthorized
+ *         description: Non authentifié
  *       500:
- *         description: Internal server error
+ *         description: Erreur serveur
  */
 router.get(
   '/:id',
   authMiddleware(),
   tenantMiddleware(),
-  organizationController.getOrganization as unknown as import('express').RequestHandler
+  organizationController.getOrganization as any
 );
 
 /**
  * @swagger
- * /api/organizations/{id}:
+ * /api/v1/organizations/{id}:
  *   put:
- *     summary: Update organization
+ *     summary: Mettre à jour une organisation
  *     tags: [Organizations]
  *     security:
  *       - BearerAuth: []
@@ -136,7 +136,7 @@ router.get(
  *         required: true
  *         schema:
  *           type: string
- *         description: Organization ID
+ *         description: ID de l'organisation
  *     requestBody:
  *       required: true
  *       content:
@@ -146,47 +146,47 @@ router.get(
  *             properties:
  *               name:
  *                 type: string
- *                 example: "Updated Organization Name"
+ *                 example: "Nom de l'organisation mis à jour"
  *               description:
  *                 type: string
- *                 example: "Updated organization description"
+ *                 example: "Description mise à jour"
  *               settings:
  *                 type: object
  *                 properties:
  *                   theme:
  *                     type: string
- *                     example: "dark"
+ *                     example: "sombre"
  *                   language:
  *                     type: string
  *                     example: "fr"
  *     responses:
  *       200:
- *         description: Organization updated successfully
+ *         description: Organisation mise à jour avec succès
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ApiResponse'
  *       400:
- *         description: Bad request
+ *         description: Données invalides
  *       401:
- *         description: Unauthorized
+ *         description: Non authentifié
  *       403:
- *         description: Forbidden
+ *         description: Permissions insuffisantes
  *       500:
- *         description: Internal server error
+ *         description: Erreur serveur
  */
 router.put(
   '/:id',
   authMiddleware(),
-  tenantMiddleware(),
-  organizationController.updateOrganization as unknown as import('express').RequestHandler
+  tenantMiddleware(['can_edit_organization'], ['owner', 'admin']),
+  organizationController.updateOrganization as any
 );
 
 /**
  * @swagger
- * /api/organizations/{id}:
+ * /api/v1/organizations/{id}:
  *   delete:
- *     summary: Delete organization
+ *     summary: Supprimer une organisation
  *     tags: [Organizations]
  *     security:
  *       - BearerAuth: []
@@ -196,28 +196,28 @@ router.put(
  *         required: true
  *         schema:
  *           type: string
- *         description: Organization ID
+ *         description: ID de l'organisation
  *     responses:
  *       200:
- *         description: Organization deleted successfully
+ *         description: Organisation supprimée avec succès
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ApiResponse'
  *       400:
- *         description: Bad request
+ *         description: Données invalides
  *       401:
- *         description: Unauthorized
+ *         description: Non authentifié
  *       403:
- *         description: Forbidden
+ *         description: Permissions insuffisantes
  *       500:
- *         description: Internal server error
+ *         description: Erreur serveur
  */
 router.delete(
   '/:id',
   authMiddleware(),
-  tenantMiddleware(),
-  organizationController.deleteOrganization as unknown as import('express').RequestHandler
+  tenantMiddleware([], ['owner']),
+  organizationController.deleteOrganization as any
 );
 
 export default router;

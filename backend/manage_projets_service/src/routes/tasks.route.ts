@@ -10,14 +10,14 @@ const taskController = new TaskController();
  * @swagger
  * tags:
  *   name: Tasks
- *   description: Task management API
+ *   description: Gestion des tâches
  */
 
 /**
  * @swagger
- * /api/tasks:
+ * /api/v1/tasks:
  *   post:
- *     summary: Create a new task
+ *     summary: Créer une nouvelle tâche
  *     tags: [Tasks]
  *     security:
  *       - BearerAuth: []
@@ -36,10 +36,10 @@ const taskController = new TaskController();
  *                 example: "123e4567-e89b-12d3-a456-426614174000"
  *               title:
  *                 type: string
- *                 example: "Design homepage layout"
+ *                 example: "Concevoir la maquette de la page d'accueil"
  *               description:
  *                 type: string
- *                 example: "Create wireframes and mockups for homepage"
+ *                 example: "Créer les wireframes et maquettes pour la page d'accueil"
  *               status:
  *                 type: string
  *                 enum: [todo, in_progress, review, done, cancelled]
@@ -65,25 +65,30 @@ const taskController = new TaskController();
  *                 example: ["design", "ui/ux"]
  *     responses:
  *       201:
- *         description: Task created successfully
+ *         description: Tâche créée avec succès
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ApiResponse'
  *       400:
- *         description: Bad request
+ *         description: Données invalides
  *       401:
- *         description: Unauthorized
+ *         description: Non authentifié
  *       500:
- *         description: Internal server error
+ *         description: Erreur serveur
  */
-router.post('/',  taskController.createTask as any);
+router.post(
+  '/',
+  authMiddleware(),
+  tenantMiddleware(['can_manage_tasks']),
+  taskController.createTask as any
+);
 
 /**
  * @swagger
- * /api/tasks/search:
+ * /api/v1/tasks/search:
  *   get:
- *     summary: Search tasks across organization
+ *     summary: Rechercher des tâches dans l'organisation
  *     tags: [Tasks]
  *     security:
  *       - BearerAuth: []
@@ -93,41 +98,46 @@ router.post('/',  taskController.createTask as any);
  *         required: true
  *         schema:
  *           type: string
- *         description: Search query
+ *         description: Terme de recherche
  *       - in: query
  *         name: page
  *         schema:
  *           type: integer
  *           minimum: 1
- *         description: Page number
+ *         description: Numéro de page
  *       - in: query
  *         name: limit
  *         schema:
  *           type: integer
  *           minimum: 1
  *           maximum: 50
- *         description: Number of items per page
+ *         description: Nombre d'éléments par page
  *     responses:
  *       200:
- *         description: Tasks search completed
+ *         description: Recherche terminée avec succès
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ApiResponse'
  *       400:
- *         description: Bad request
+ *         description: Terme de recherche manquant
  *       401:
- *         description: Unauthorized
+ *         description: Non authentifié
  *       500:
- *         description: Internal server error
+ *         description: Erreur serveur
  */
-router.get('/search',  taskController.searchTasks as any);
+router.get(
+  '/search',
+  authMiddleware(),
+  tenantMiddleware(),
+  taskController.searchTasks as any
+);
 
 /**
  * @swagger
- * /api/tasks/{id}:
+ * /api/v1/tasks/{id}:
  *   get:
- *     summary: Get task by ID
+ *     summary: Obtenir une tâche par son ID
  *     tags: [Tasks]
  *     security:
  *       - BearerAuth: []
@@ -137,28 +147,33 @@ router.get('/search',  taskController.searchTasks as any);
  *         required: true
  *         schema:
  *           type: string
- *         description: Task ID
+ *         description: ID de la tâche
  *     responses:
  *       200:
- *         description: Task retrieved successfully
+ *         description: Tâche récupérée avec succès
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ApiResponse'
  *       404:
- *         description: Task not found
+ *         description: Tâche non trouvée
  *       401:
- *         description: Unauthorized
+ *         description: Non authentifié
  *       500:
- *         description: Internal server error
+ *         description: Erreur serveur
  */
-router.get('/:id',  taskController.getTask as any);
+router.get(
+  '/:id',
+  authMiddleware(),
+  tenantMiddleware(),
+  taskController.getTask as any
+);
 
 /**
  * @swagger
- * /api/projects/{projectId}/tasks:
+ * /api/v1/projects/{projectId}/tasks:
  *   get:
- *     summary: Get tasks for a project
+ *     summary: Obtenir les tâches d'un projet
  *     tags: [Tasks]
  *     security:
  *       - BearerAuth: []
@@ -168,73 +183,66 @@ router.get('/:id',  taskController.getTask as any);
  *         required: true
  *         schema:
  *           type: string
- *         description: Project ID
+ *         description: ID du projet
  *       - in: query
  *         name: status
  *         schema:
  *           type: string
  *           enum: [todo, in_progress, review, done, cancelled]
- *         description: Filter by status
+ *         description: Filtrer par statut
  *       - in: query
  *         name: priority
  *         schema:
  *           type: string
  *           enum: [low, medium, high, urgent]
- *         description: Filter by priority
+ *         description: Filtrer par priorité
  *       - in: query
  *         name: assignee_id
  *         schema:
  *           type: string
- *         description: Filter by assignee
+ *         description: Filtrer par assigné
  *       - in: query
  *         name: tags
  *         schema:
  *           type: string
- *         description: Comma-separated tags to filter
- *       - in: query
- *         name: due_date_from
- *         schema:
- *           type: string
- *           format: date
- *         description: Filter by due date from
- *       - in: query
- *         name: due_date_to
- *         schema:
- *           type: string
- *           format: date
- *         description: Filter by due date to
+ *         description: Tags séparés par des virgules
  *       - in: query
  *         name: page
  *         schema:
  *           type: integer
  *           minimum: 1
- *         description: Page number
+ *         description: Numéro de page
  *       - in: query
  *         name: limit
  *         schema:
  *           type: integer
  *           minimum: 1
  *           maximum: 100
- *         description: Number of items per page
+ *         description: Nombre d'éléments par page
  *     responses:
  *       200:
- *         description: Tasks retrieved successfully
+ *         description: Tâches récupérées avec succès
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ApiResponse'
  *       401:
- *         description: Unauthorized
+ *         description: Non authentifié
  *       500:
- *         description: Internal server error
+ *         description: Erreur serveur
  */
-router.get('/projects/:projectId/tasks',  taskController.getProjectTasks as any);
+router.get(
+  '/projects/:projectId/tasks',
+  authMiddleware(),
+  tenantMiddleware(),
+  taskController.getProjectTasks as any
+);
 
 /**
  * @swagger
- * /api/tasks/{id}:
+ * /api/v1/tasks/{id}:
  *   put:
- *     summary: Update task
+ *     summary: Mettre à jour une tâche
  *     tags: [Tasks]
  *     security:
  *       - BearerAuth: []
@@ -244,7 +252,7 @@ router.get('/projects/:projectId/tasks',  taskController.getProjectTasks as any)
  *         required: true
  *         schema:
  *           type: string
- *         description: Task ID
+ *         description: ID de la tâche
  *     requestBody:
  *       required: true
  *       content:
@@ -254,10 +262,10 @@ router.get('/projects/:projectId/tasks',  taskController.getProjectTasks as any)
  *             properties:
  *               title:
  *                 type: string
- *                 example: "Updated task title"
+ *                 example: "Titre de la tâche mis à jour"
  *               description:
  *                 type: string
- *                 example: "Updated task description"
+ *                 example: "Description mise à jour"
  *               status:
  *                 type: string
  *                 enum: [todo, in_progress, review, done, cancelled]
@@ -270,41 +278,32 @@ router.get('/projects/:projectId/tasks',  taskController.getProjectTasks as any)
  *                 type: string
  *                 format: date-time
  *                 example: "2024-01-20T23:59:59Z"
- *               estimated_hours:
- *                 type: number
- *                 example: 12
- *               actual_hours:
- *                 type: number
- *                 example: 6
- *               assignee_id:
- *                 type: string
- *                 example: "123e4567-e89b-12d3-a456-426614174001"
- *               tags:
- *                 type: array
- *                 items:
- *                   type: string
- *                 example: ["design", "ui/ux", "frontend"]
  *     responses:
  *       200:
- *         description: Task updated successfully
+ *         description: Tâche mise à jour avec succès
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ApiResponse'
  *       400:
- *         description: Bad request
+ *         description: Données invalides
  *       401:
- *         description: Unauthorized
+ *         description: Non authentifié
  *       500:
- *         description: Internal server error
+ *         description: Erreur serveur
  */
-router.put('/:id',  taskController.updateTask as any);
+router.put(
+  '/:id',
+  authMiddleware(),
+  tenantMiddleware(['can_manage_tasks']),
+  taskController.updateTask as any
+);
 
 /**
  * @swagger
- * /api/tasks/{id}/position:
+ * /api/v1/tasks/{id}/position:
  *   patch:
- *     summary: Update task position
+ *     summary: Mettre à jour la position d'une tâche
  *     tags: [Tasks]
  *     security:
  *       - BearerAuth: []
@@ -314,7 +313,7 @@ router.put('/:id',  taskController.updateTask as any);
  *         required: true
  *         schema:
  *           type: string
- *         description: Task ID
+ *         description: ID de la tâche
  *     requestBody:
  *       required: true
  *       content:
@@ -330,25 +329,30 @@ router.put('/:id',  taskController.updateTask as any);
  *                 example: 3
  *     responses:
  *       200:
- *         description: Task position updated successfully
+ *         description: Position mise à jour avec succès
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ApiResponse'
  *       400:
- *         description: Bad request
+ *         description: Données invalides
  *       401:
- *         description: Unauthorized
+ *         description: Non authentifié
  *       500:
- *         description: Internal server error
+ *         description: Erreur serveur
  */
-router.patch('/:id/position',  taskController.updateTaskPosition as any);
+router.patch(
+  '/:id/position',
+  authMiddleware(),
+  tenantMiddleware(['can_manage_tasks']),
+  taskController.updateTaskPosition as any
+);
 
 /**
  * @swagger
- * /api/tasks/{id}:
+ * /api/v1/tasks/{id}:
  *   delete:
- *     summary: Delete task
+ *     summary: Supprimer une tâche
  *     tags: [Tasks]
  *     security:
  *       - BearerAuth: []
@@ -358,21 +362,26 @@ router.patch('/:id/position',  taskController.updateTaskPosition as any);
  *         required: true
  *         schema:
  *           type: string
- *         description: Task ID
+ *         description: ID de la tâche
  *     responses:
  *       200:
- *         description: Task deleted successfully
+ *         description: Tâche supprimée avec succès
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ApiResponse'
  *       400:
- *         description: Bad request
+ *         description: Données invalides
  *       401:
- *         description: Unauthorized
+ *         description: Non authentifié
  *       500:
- *         description: Internal server error
+ *         description: Erreur serveur
  */
-router.delete('/:id', taskController.deleteTask as any);
+router.delete(
+  '/:id',
+  authMiddleware(),
+  tenantMiddleware(['can_manage_tasks']),
+  taskController.deleteTask as any
+);
 
 export default router;

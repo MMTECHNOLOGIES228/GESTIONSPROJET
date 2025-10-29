@@ -10,14 +10,14 @@ const projectController = new ProjectController();
  * @swagger
  * tags:
  *   name: Projects
- *   description: Project management API
+ *   description: Gestion des projets
  */
 
 /**
  * @swagger
- * /api/projects:
+ * /api/v1/projects:
  *   post:
- *     summary: Create a new project
+ *     summary: Créer un nouveau projet
  *     tags: [Projects]
  *     security:
  *       - BearerAuth: []
@@ -32,10 +32,10 @@ const projectController = new ProjectController();
  *             properties:
  *               name:
  *                 type: string
- *                 example: "Website Redesign"
+ *                 example: "Refonte du site web"
  *               description:
  *                 type: string
- *                 example: "Complete redesign of company website"
+ *                 example: "Refonte complète du site web de l'entreprise"
  *               status:
  *                 type: string
  *                 enum: [planning, active, on_hold, completed, archived]
@@ -58,25 +58,30 @@ const projectController = new ProjectController();
  *                 example: ["design", "development", "marketing"]
  *     responses:
  *       201:
- *         description: Project created successfully
+ *         description: Projet créé avec succès
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ApiResponse'
  *       400:
- *         description: Bad request
+ *         description: Données invalides
  *       401:
- *         description: Unauthorized
+ *         description: Non authentifié
  *       500:
- *         description: Internal server error
+ *         description: Erreur serveur
  */
-router.post('/', authMiddleware(), tenantMiddleware(), projectController.createProject as any);
+router.post(
+  '/',
+  authMiddleware(),
+  tenantMiddleware(['can_create_projects']),
+  projectController.createProject as any
+);
 
 /**
  * @swagger
- * /api/projects:
+ * /api/v1/projects:
  *   get:
- *     summary: Get all projects for current organization
+ *     summary: Obtenir tous les projets de l'organisation courante
  *     tags: [Projects]
  *     security:
  *       - BearerAuth: []
@@ -86,66 +91,65 @@ router.post('/', authMiddleware(), tenantMiddleware(), projectController.createP
  *         schema:
  *           type: integer
  *           minimum: 1
- *         description: Page number
+ *         description: Numéro de page
  *       - in: query
  *         name: limit
  *         schema:
  *           type: integer
  *           minimum: 1
  *           maximum: 100
- *         description: Number of items per page
- *       - in: query
- *         name: sortBy
- *         schema:
- *           type: string
- *         description: Field to sort by
- *       - in: query
- *         name: sortOrder
- *         schema:
- *           type: string
- *           enum: [ASC, DESC]
- *         description: Sort order
+ *         description: Nombre d'éléments par page
  *     responses:
  *       200:
- *         description: Projects retrieved successfully
+ *         description: Projets récupérés avec succès
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ApiResponse'
  *       401:
- *         description: Unauthorized
+ *         description: Non authentifié
  *       500:
- *         description: Internal server error
+ *         description: Erreur serveur
  */
-router.get('/', authMiddleware(), tenantMiddleware(), projectController.getOrganizationProjects as any);
+router.get(
+  '/',
+  authMiddleware(),
+  tenantMiddleware(),
+  projectController.getOrganizationProjects as any
+);
 
 /**
  * @swagger
- * /api/projects/stats:
+ * /api/v1/projects/stats:
  *   get:
- *     summary: Get project statistics for organization
+ *     summary: Obtenir les statistiques des projets de l'organisation
  *     tags: [Projects]
  *     security:
  *       - BearerAuth: []
  *     responses:
  *       200:
- *         description: Project statistics retrieved successfully
+ *         description: Statistiques récupérées avec succès
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ApiResponse'
  *       401:
- *         description: Unauthorized
+ *         description: Non authentifié
  *       500:
- *         description: Internal server error
+ *         description: Erreur serveur
  */
-router.get('/stats',authMiddleware(), tenantMiddleware(), projectController.getProjectStats as any);
+router.get(
+  '/stats',
+  authMiddleware(),
+  tenantMiddleware(),
+  projectController.getProjectStats as any
+);
 
 /**
  * @swagger
- * /api/projects/{id}:
+ * /api/v1/projects/{id}:
  *   get:
- *     summary: Get project by ID
+ *     summary: Obtenir un projet par son ID
  *     tags: [Projects]
  *     security:
  *       - BearerAuth: []
@@ -155,28 +159,33 @@ router.get('/stats',authMiddleware(), tenantMiddleware(), projectController.getP
  *         required: true
  *         schema:
  *           type: string
- *         description: Project ID
+ *         description: ID du projet
  *     responses:
  *       200:
- *         description: Project retrieved successfully
+ *         description: Projet récupéré avec succès
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ApiResponse'
  *       404:
- *         description: Project not found
+ *         description: Projet non trouvé
  *       401:
- *         description: Unauthorized
+ *         description: Non authentifié
  *       500:
- *         description: Internal server error
+ *         description: Erreur serveur
  */
-router.get('/:id',authMiddleware(), tenantMiddleware(), projectController.getProject as any);
+router.get(
+  '/:id',
+  authMiddleware(),
+  tenantMiddleware(),
+  projectController.getProject as any
+);
 
 /**
  * @swagger
- * /api/projects/{id}:
+ * /api/v1/projects/{id}:
  *   put:
- *     summary: Update project
+ *     summary: Mettre à jour un projet
  *     tags: [Projects]
  *     security:
  *       - BearerAuth: []
@@ -186,7 +195,7 @@ router.get('/:id',authMiddleware(), tenantMiddleware(), projectController.getPro
  *         required: true
  *         schema:
  *           type: string
- *         description: Project ID
+ *         description: ID du projet
  *     requestBody:
  *       required: true
  *       content:
@@ -196,10 +205,10 @@ router.get('/:id',authMiddleware(), tenantMiddleware(), projectController.getPro
  *             properties:
  *               name:
  *                 type: string
- *                 example: "Updated Project Name"
+ *                 example: "Nom du projet mis à jour"
  *               description:
  *                 type: string
- *                 example: "Updated project description"
+ *                 example: "Description mise à jour"
  *               status:
  *                 type: string
  *                 enum: [planning, active, on_hold, completed, archived]
@@ -209,32 +218,34 @@ router.get('/:id',authMiddleware(), tenantMiddleware(), projectController.getPro
  *                 minimum: 0
  *                 maximum: 100
  *                 example: 50
- *               budget:
- *                 type: number
- *                 example: 60000
  *     responses:
  *       200:
- *         description: Project updated successfully
+ *         description: Projet mis à jour avec succès
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ApiResponse'
  *       400:
- *         description: Bad request
+ *         description: Données invalides
  *       401:
- *         description: Unauthorized
+ *         description: Non authentifié
  *       403:
- *         description: Forbidden
+ *         description: Permissions insuffisantes
  *       500:
- *         description: Internal server error
+ *         description: Erreur serveur
  */
-router.put('/:id', authMiddleware(), tenantMiddleware(), projectController.updateProject as any);
+router.put(
+  '/:id',
+  authMiddleware(),
+  tenantMiddleware(['can_edit_projects']),
+  projectController.updateProject as any
+);
 
 /**
  * @swagger
- * /api/projects/{id}:
+ * /api/v1/projects/{id}:
  *   delete:
- *     summary: Delete project
+ *     summary: Supprimer un projet
  *     tags: [Projects]
  *     security:
  *       - BearerAuth: []
@@ -244,23 +255,28 @@ router.put('/:id', authMiddleware(), tenantMiddleware(), projectController.updat
  *         required: true
  *         schema:
  *           type: string
- *         description: Project ID
+ *         description: ID du projet
  *     responses:
  *       200:
- *         description: Project deleted successfully
+ *         description: Projet supprimé avec succès
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ApiResponse'
  *       400:
- *         description: Bad request
+ *         description: Données invalides
  *       401:
- *         description: Unauthorized
+ *         description: Non authentifié
  *       403:
- *         description: Forbidden
+ *         description: Permissions insuffisantes
  *       500:
- *         description: Internal server error
+ *         description: Erreur serveur
  */
-router.delete('/:id', authMiddleware(), tenantMiddleware(), projectController.deleteProject as any);
+router.delete(
+  '/:id',
+  authMiddleware(),
+  tenantMiddleware(['can_delete_projects']),
+  projectController.deleteProject as any
+);
 
 export default router;
