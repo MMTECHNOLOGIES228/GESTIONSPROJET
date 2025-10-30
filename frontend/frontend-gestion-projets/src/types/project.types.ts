@@ -1,3 +1,4 @@
+// types/project.types.ts - Assurez-vous d'avoir ces types
 export interface Project {
   id: string;
   name: string;
@@ -7,7 +8,9 @@ export interface Project {
   endDate?: string;
   budget?: number;
   tags?: string[];
-  tasksCount?: number;
-  createdAt: string;
-  updatedAt: string;
+  progress?: number;
+  organization_id?: string;
+  created_by?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }

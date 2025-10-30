@@ -14,6 +14,7 @@ import Users from './pages/users/Users';
 import Unauthorized from './pages/Unauthorized';
 import NotFound from './pages/NotFound';
 import RolesPermissions from './pages/users/RolesPermissions';
+import CreateProject from './pages/projects/CreateProject';
 
 function App() {
   return (
@@ -35,6 +36,11 @@ function App() {
             <Route path="/projects" element={
               <ProtectedRoute requiredPermissions={['project:read']}>
                 <ProjectsList />
+              </ProtectedRoute>
+            } />
+            <Route path="/projects/create" element={
+              <ProtectedRoute requiredPermissions={['project:create']}>
+                <CreateProject />
               </ProtectedRoute>
             } />
 
