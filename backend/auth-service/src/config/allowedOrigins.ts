@@ -3,7 +3,11 @@ let allowedOrigins = [
     'http://127.0.0.1:5001',
     'http://localhost:5000',
     'http://localhost:5001',
-    'http://localhost:4001'
+    'http://localhost:4001',
+    'http://195.26.241.68:5000',
+    'http://195.26.241.68:5001',
+    'http://195.26.241.68:4001',
+
 ];
 
 export default allowedOrigins;
