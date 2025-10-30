@@ -143,7 +143,6 @@ RefreshToken.belongsTo(Utilisateur, {
 });
 
 
-
 const initDb = async () => {
 
   try {
