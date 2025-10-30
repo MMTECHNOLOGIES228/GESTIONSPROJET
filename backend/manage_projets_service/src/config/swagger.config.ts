@@ -13,10 +13,10 @@ const swaggerOptions: swaggerJSDoc.Options = {
         url: 'http://localhost:9001',
         description: 'Local server',
       },
-      // {
-      //   url: 'http://195.26.241.68:9000',
-      //   description: 'Production server',
-      // },
+      {
+        url: 'http://195.26.241.68:5001',
+        description: 'Production server',
+      },
     ],
     components: {
       securitySchemes: {
