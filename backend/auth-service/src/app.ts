@@ -27,7 +27,7 @@ import { initDb } from "./db/sequelize";
 const app = express();
 
 
-const port = process.env.PORT || 9000;
+const port = process.env.PORT || 5000;
 
 // parse application/json
 app

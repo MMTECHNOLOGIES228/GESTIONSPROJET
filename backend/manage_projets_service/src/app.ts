@@ -33,7 +33,7 @@ import { initDb } from './db/sequelize';
 const app = express();
 
 
-const port = process.env.PORT || 9001;
+const port = process.env.PORT || 5001;
 
 // parse application/json
 app

@@ -50,7 +50,7 @@ services:
       NODE_ENV: production
     network_mode: "host"
     ports:
-      - "9000:9000"
+      - "5000:5000"
     volumes:
       - ./backend/auth-service:/app
     restart: always
@@ -60,7 +60,7 @@ services:
       NODE_ENV: production
     network_mode: "host"
     ports:
-      - "9001:9001"
+      - "5001:5001"
     volumes:
       - ./backend/manage_projets_service:/app
     restart: always
